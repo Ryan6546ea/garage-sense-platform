@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "2.0",
+  "messageId": "MSG-423e4567-e89b-42d3-a456-426614174004",
+  "garageId": "G001",
+  "areaId": "A-ENV",
+  "deviceId": "G001-TH-001",
+  "sensorId": "G001-TH-001",
+  "pointCode": "GARAGE_TEMP_HUMIDITY",
+  "sensorType": "environment",
+  "sourceTime": "2026-07-31T00:05:04+08:00",
+  "seq": 1005,
+  "status": "normal",
+  "quality": "valid",
+  "actionStage": "idle",
+  "source": "simulator",
+  "scenarioId": "ENVIRONMENT_NORMAL",
+  "data": {
+    "temperature": 26.5,
+    "temperatureUnit": "C",
+    "humidity": 63.2,
+    "humidityUnit": "%RH",
+    "pressureKPa": 81.0,
+    "altitudeMeters": 1900.0,
+    "condensationRisk": false
+  }
+}

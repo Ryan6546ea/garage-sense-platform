@@ -1,0 +1,10 @@
+# Reloaded at the start of each cycle. One year means 365 x 24 hours in UTC.
+enabled = true
+interval_seconds = 86400
+sensor_retention_days = 365
+batch_size = 1000
+max_batches_per_table = 100
+statement_timeout_seconds = 30
+
+# Optional: invalid MQTT payloads are retained indefinitely unless enabled here.
+# ingest_failure_retention_days = 365

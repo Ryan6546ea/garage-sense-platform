@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "eventId": 1,
+      "actorId": "00000000-0000-0000-0000-000000000001",
+      "actor": "example.user",
+      "action": "session.login",
+      "target": "00000000-0000-0000-0000-000000000001",
+      "garageIds": [],
+      "outcome": "success",
+      "occurredAt": "2026-10-14T00:00:00Z",
+      "details": {}
+    }
+  ],
+  "nextCursor": null
+}

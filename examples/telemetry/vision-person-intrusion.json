@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "2.0",
+  "messageId": "MSG-723e4567-e89b-42d3-a456-426614174007",
+  "garageId": "G001",
+  "areaId": "A-SAFETY",
+  "deviceId": "G001-VISION-001",
+  "sensorId": "G001-VISION-001",
+  "pointCode": "VISION_SAFETY_STATE",
+  "sensorType": "vision_event",
+  "sourceTime": "2026-07-31T00:05:07+08:00",
+  "seq": 1008,
+  "status": "warning",
+  "quality": "valid",
+  "actionStage": "lifting",
+  "source": "simulator",
+  "scenarioId": "VISION_PERSON_INTRUSION",
+  "data": {
+    "cameraId": "G001-CAM-001",
+    "personDetected": true,
+    "vehicleDetected": true,
+    "vehiclePosition": "aligned",
+    "confidence": 0.97
+  }
+}

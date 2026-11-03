@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://garage-simulation.local/schemas/laser-telemetry-envelope.schema.json",
+  "title": "Laser Telemetry Envelope",
+  "description": "Version 2.0 telemetry envelope for laser distance and position data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "messageId",
+    "garageId",
+    "areaId",
+    "deviceId",
+    "sensorId",
+    "pointCode",
+    "sensorType",
+    "sourceTime",
+    "seq",
+    "status",
+    "quality",
+    "actionStage",
+    "source",
+    "scenarioId",
+    "data"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "2.0"
+    },
+    "messageId": {
+      "type": "string",
+      "pattern": "^MSG-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "garageId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "areaId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "deviceId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sensorId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pointCode": {
+      "const": "VEHICLE_DISTANCE"
+    },
+    "sensorType": {
+      "const": "laser_distance"
+    },
+    "sourceTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "normal",
+        "warning",
+        "critical",
+        "fault",
+        "offline",
+        "unknown"
+      ]
+    },
+    "quality": {
+      "type": "string",
+      "enum": [
+        "valid",
+        "invalid",
+        "missing",
+        "delayed",
+        "duplicated",
+        "out_of_range"
+      ]
+    },
+    "actionStage": {
+      "enum": ["idle", "starting", "lifting", "shifting", "arriving", "stopped", "fault"]
+    },
+    "source": {
+      "const": "simulator"
+    },
+    "scenarioId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "vehiclePresent",
+        "distanceM",
+        "displacementM",
+        "positionStatus"
+      ],
+      "properties": {
+        "vehiclePresent": {
+          "type": "boolean"
+        },
+        "distanceM": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "displacementM": {
+          "type": ["number", "null"]
+        },
+        "positionStatus": {
+          "enum": ["unknown", "clear", "aligned", "misaligned"]
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "offline"}}},
+      "then": {
+        "properties": {
+          "quality": {"const": "missing"},
+          "data": {"properties": {"distanceM": {"type": "null"}, "displacementM": {"type": "null"}}}
+        }
+      },
+      "else": {
+        "properties": {
+          "data": {"properties": {"distanceM": {"type": "number"}, "displacementM": {"type": "number"}}}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"quality": {"const": "missing"}}},
+      "then": {"properties": {"status": {"const": "offline"}}}
+    }
+  ]
+}

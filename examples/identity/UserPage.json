@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "version": 1,
+      "role": "viewer",
+      "status": "active",
+      "garageIds": [
+        "G001"
+      ],
+      "logScope": "own",
+      "logExport": false,
+      "userId": "00000000-0000-0000-0000-000000000001",
+      "username": "example.user",
+      "displayName": "Example User",
+      "createdAt": "2026-10-14T00:00:00Z"
+    }
+  ],
+  "nextCursor": null
+}

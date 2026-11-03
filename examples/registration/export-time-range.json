@@ -1,0 +1,11 @@
+{
+  "type": "time_range",
+  "receivedFrom": "2026-10-14T00:00:00Z",
+  "receivedTo": "2026-10-15T00:00:00Z",
+  "sensorIds": [
+    "G001-CUR-LIFT-001"
+  ],
+  "garageIds": [
+    "G001"
+  ]
+}

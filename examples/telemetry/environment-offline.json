@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "2.0",
+  "messageId": "MSG-623e4567-e89b-42d3-a456-426614174006",
+  "garageId": "G001",
+  "areaId": "A-ENV",
+  "deviceId": "G001-TH-001",
+  "sensorId": "G001-TH-001",
+  "pointCode": "GARAGE_TEMP_HUMIDITY",
+  "sensorType": "environment",
+  "sourceTime": "2026-07-31T00:05:06+08:00",
+  "seq": 1007,
+  "status": "offline",
+  "quality": "missing",
+  "actionStage": "fault",
+  "source": "simulator",
+  "scenarioId": "ENVIRONMENT_OFFLINE",
+  "data": {
+    "temperature": null,
+    "temperatureUnit": "C",
+    "humidity": null,
+    "humidityUnit": "%RH",
+    "pressureKPa": null,
+    "altitudeMeters": null,
+    "condensationRisk": null
+  }
+}

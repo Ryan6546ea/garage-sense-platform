@@ -1,0 +1,59 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "role": {
+      "enum": [
+        "viewer",
+        "operator",
+        "admin"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "pending",
+        "active",
+        "disabled"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "garageIds": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 1000,
+      "title": "Garageids",
+      "type": "array"
+    },
+    "logScope": {
+      "enum": [
+        "own",
+        "garage",
+        "all"
+      ],
+      "title": "Logscope",
+      "type": "string"
+    },
+    "logExport": {
+      "title": "Logexport",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "version",
+    "role",
+    "status",
+    "garageIds",
+    "logScope",
+    "logExport"
+  ],
+  "title": "AccessUpdate",
+  "type": "object"
+}

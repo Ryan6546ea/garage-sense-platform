@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "2.0",
+  "messageId": "MSG-550e8400-e29b-41d4-a716-446655440000",
+  "garageId": "G001",
+  "areaId": "A-PRESENCE",
+  "deviceId": "G001-LASER-001",
+  "sensorId": "G001-LASER-001",
+  "pointCode": "VEHICLE_DISTANCE",
+  "sensorType": "laser_distance",
+  "sourceTime": "2026-07-31T00:05:00.100+08:00",
+  "seq": 1001,
+  "status": "normal",
+  "quality": "valid",
+  "actionStage": "arriving",
+  "source": "simulator",
+  "scenarioId": "LASER_VEHICLE_PRESENT",
+  "data": {
+    "vehiclePresent": true,
+    "distanceM": 1.2,
+    "displacementM": 0.02,
+    "positionStatus": "aligned"
+  }
+}

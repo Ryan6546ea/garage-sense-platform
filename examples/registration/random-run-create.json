@@ -1,0 +1,18 @@
+{
+  "durationSeconds": 60,
+  "abnormalProbability": 1,
+  "seed": 17,
+  "allowedTargets": [
+    "G001-MOTOR-LIFT-001"
+  ],
+  "allowedScenarios": [
+    "LIFT_CURRENT_OVERLOAD"
+  ],
+  "scenarioDuration": {
+    "minimumSeconds": 1,
+    "maximumSeconds": 2
+  },
+  "selectionIntervalSeconds": 1,
+  "name": "Lift overload test",
+  "createdBy": "operator"
+}

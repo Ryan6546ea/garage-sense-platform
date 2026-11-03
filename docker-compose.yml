@@ -1,0 +1,223 @@
+name: garage-backend
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    ports:
+    - 127.0.0.1:${POSTGRES_PORT:?POSTGRES_PORT is required}:5432
+    volumes:
+    - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+  mosquitto:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    environment:
+      MQTT_USERNAME: ${MQTT_USERNAME:?MQTT_USERNAME is required}
+      MQTT_PASSWORD: ${MQTT_PASSWORD:?MQTT_PASSWORD is required}
+    entrypoint:
+    - /bin/sh
+    - -ec
+    command:
+    - ": \"$${MQTT_USERNAME:?MQTT_USERNAME is required}\"\n: \"$${MQTT_PASSWORD:?MQTT_PASSWORD is required}\"\nrm -f /tmp/mosquitto.passwd\nmosquitto_passwd -b -c /tmp/mosquitto.passwd \\\n  \"$${MQTT_USERNAME}\" \"$${MQTT_PASSWORD}\"\nchown mosquitto:mosquitto /tmp/mosquitto.passwd\nchmod 0600 /tmp/mosquitto.passwd\nexec mosquitto -c /mosquitto/config-template/mosquitto.conf\n"
+    ports:
+    - 127.0.0.1:${MQTT_PORT:?MQTT_PORT is required}:1883
+    volumes:
+    - ./config/mosquitto/mosquitto.conf:/mosquitto/config-template/mosquitto.conf:ro
+    - mosquitto-data:/mosquitto/data
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - mosquitto_pub -h 127.0.0.1 -p 1883 -u "$${MQTT_USERNAME}" -P "$${MQTT_PASSWORD}" -t "garage/health/mosquitto" -m "ok" -q 1 >/dev/null 2>&1
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+  event-recorder:
+    image: garage-backend/event-recorder:local
+    build:
+      context: .
+      dockerfile: services/event-recorder/Dockerfile
+    restart: unless-stopped
+    environment:
+      AUTH_ENABLED: ${AUTH_ENABLED:-true}
+      AUTH_SERVICE_TOKEN: ${AUTH_SERVICE_TOKEN:?AUTH_SERVICE_TOKEN is required}
+      AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
+      AUTH_SESSION_SECONDS: ${AUTH_SESSION_SECONDS:-28800}
+      EVENT_RECORDER_ENVIRONMENT: ${EVENT_RECORDER_ENVIRONMENT:?EVENT_RECORDER_ENVIRONMENT is required}
+      EVENT_RECORDER_API_HOST: ${EVENT_RECORDER_API_HOST:?EVENT_RECORDER_API_HOST is required}
+      EVENT_RECORDER_API_PORT: ${EVENT_RECORDER_API_PORT:?EVENT_RECORDER_API_PORT is required}
+      EVENT_RECORDER_DATABASE_HOST: postgres
+      EVENT_RECORDER_DATABASE_PORT: 5432
+      EVENT_RECORDER_DATABASE_NAME: ${POSTGRES_DB:?POSTGRES_DB is required}
+      EVENT_RECORDER_DATABASE_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      EVENT_RECORDER_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      EVENT_RECORDER_MQTT_HOST: mosquitto
+      EVENT_RECORDER_MQTT_PORT: 1883
+      EVENT_RECORDER_MQTT_USERNAME: ${MQTT_USERNAME:?MQTT_USERNAME is required}
+      EVENT_RECORDER_MQTT_PASSWORD: ${MQTT_PASSWORD:?MQTT_PASSWORD is required}
+      EVENT_RECORDER_MQTT_CLIENT_ID: ${EVENT_RECORDER_MQTT_CLIENT_ID:?EVENT_RECORDER_MQTT_CLIENT_ID is required}
+      EVENT_RECORDER_MQTT_TOPIC: ${EVENT_RECORDER_MQTT_TOPIC:?EVENT_RECORDER_MQTT_TOPIC is required}
+      EVENT_RECORDER_MQTT_KEEPALIVE_SECONDS: ${EVENT_RECORDER_MQTT_KEEPALIVE_SECONDS:?EVENT_RECORDER_MQTT_KEEPALIVE_SECONDS is required}
+      EVENT_RECORDER_MQTT_RECONNECT_INITIAL_SECONDS: ${EVENT_RECORDER_MQTT_RECONNECT_INITIAL_SECONDS:?EVENT_RECORDER_MQTT_RECONNECT_INITIAL_SECONDS is required}
+      EVENT_RECORDER_MQTT_RECONNECT_MAX_SECONDS: ${EVENT_RECORDER_MQTT_RECONNECT_MAX_SECONDS:?EVENT_RECORDER_MQTT_RECONNECT_MAX_SECONDS is required}
+      EVENT_RECORDER_SCHEMA_DIRECTORY: /app/schemas
+      EVENT_RECORDER_MAX_MESSAGE_BYTES: ${EVENT_RECORDER_MAX_MESSAGE_BYTES:?EVENT_RECORDER_MAX_MESSAGE_BYTES is required}
+      EVENT_RECORDER_MAX_FAILURE_PAYLOAD_BYTES: ${EVENT_RECORDER_MAX_FAILURE_PAYLOAD_BYTES:?EVENT_RECORDER_MAX_FAILURE_PAYLOAD_BYTES is required}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+    - 127.0.0.1:${EVENT_RECORDER_HTTP_PORT:?EVENT_RECORDER_HTTP_PORT is required}:${EVENT_RECORDER_API_PORT:?EVENT_RECORDER_API_PORT is required}
+    healthcheck:
+      test:
+      - CMD
+      - python
+      - -m
+      - event_recorder.healthcheck
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 15s
+  telemetry-consumer:
+    image: garage-backend/telemetry-consumer:local
+    build:
+      context: .
+      dockerfile: services/telemetry-consumer/Dockerfile
+    restart: unless-stopped
+    environment:
+      AUTH_ENABLED: ${AUTH_ENABLED:-true}
+      AUTH_SERVICE_TOKEN: ${AUTH_SERVICE_TOKEN:?AUTH_SERVICE_TOKEN is required}
+      AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
+      AUTH_SESSION_SECONDS: ${AUTH_SESSION_SECONDS:-28800}
+      TELEMETRY_CONSUMER_REGISTRY_BASE_URL: http://control-service:${CONTROL_API_PORT:?CONTROL_API_PORT is required}
+      TELEMETRY_CONSUMER_ENVIRONMENT: ${TELEMETRY_CONSUMER_ENVIRONMENT:?TELEMETRY_CONSUMER_ENVIRONMENT is required}
+      TELEMETRY_CONSUMER_API_HOST: ${TELEMETRY_CONSUMER_API_HOST:?TELEMETRY_CONSUMER_API_HOST is required}
+      TELEMETRY_CONSUMER_API_PORT: ${TELEMETRY_CONSUMER_API_PORT:?TELEMETRY_CONSUMER_API_PORT is required}
+      TELEMETRY_CONSUMER_DATABASE_HOST: postgres
+      TELEMETRY_CONSUMER_DATABASE_PORT: 5432
+      TELEMETRY_CONSUMER_DATABASE_NAME: ${POSTGRES_DB:?POSTGRES_DB is required}
+      TELEMETRY_CONSUMER_DATABASE_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      TELEMETRY_CONSUMER_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      TELEMETRY_CONSUMER_MQTT_HOST: mosquitto
+      TELEMETRY_CONSUMER_MQTT_PORT: 1883
+      TELEMETRY_CONSUMER_MQTT_USERNAME: ${MQTT_USERNAME:?MQTT_USERNAME is required}
+      TELEMETRY_CONSUMER_MQTT_PASSWORD: ${MQTT_PASSWORD:?MQTT_PASSWORD is required}
+      TELEMETRY_CONSUMER_MQTT_CLIENT_ID: ${TELEMETRY_CONSUMER_MQTT_CLIENT_ID:?TELEMETRY_CONSUMER_MQTT_CLIENT_ID is required}
+      TELEMETRY_CONSUMER_MQTT_TOPIC_PREFIX: ${TELEMETRY_CONSUMER_MQTT_TOPIC_PREFIX:?TELEMETRY_CONSUMER_MQTT_TOPIC_PREFIX is required}
+      TELEMETRY_CONSUMER_MQTT_KEEPALIVE_SECONDS: ${TELEMETRY_CONSUMER_MQTT_KEEPALIVE_SECONDS:?TELEMETRY_CONSUMER_MQTT_KEEPALIVE_SECONDS is required}
+      TELEMETRY_CONSUMER_MQTT_RECONNECT_INITIAL_SECONDS: ${TELEMETRY_CONSUMER_MQTT_RECONNECT_INITIAL_SECONDS:?TELEMETRY_CONSUMER_MQTT_RECONNECT_INITIAL_SECONDS is required}
+      TELEMETRY_CONSUMER_MQTT_RECONNECT_MAX_SECONDS: ${TELEMETRY_CONSUMER_MQTT_RECONNECT_MAX_SECONDS:?TELEMETRY_CONSUMER_MQTT_RECONNECT_MAX_SECONDS is required}
+      TELEMETRY_CONSUMER_SCHEMA_DIRECTORY: /app/schemas
+      TELEMETRY_CONSUMER_MAX_MESSAGE_BYTES: ${TELEMETRY_CONSUMER_MAX_MESSAGE_BYTES:?TELEMETRY_CONSUMER_MAX_MESSAGE_BYTES is required}
+      TELEMETRY_CONSUMER_MAX_FAILURE_PAYLOAD_BYTES: ${TELEMETRY_CONSUMER_MAX_FAILURE_PAYLOAD_BYTES:?TELEMETRY_CONSUMER_MAX_FAILURE_PAYLOAD_BYTES is required}
+      TELEMETRY_CONSUMER_QUEUE_CAPACITY: ${TELEMETRY_CONSUMER_QUEUE_CAPACITY:?TELEMETRY_CONSUMER_QUEUE_CAPACITY is required}
+      TELEMETRY_CONSUMER_PROCESSING_TIMEOUT_SECONDS: ${TELEMETRY_CONSUMER_PROCESSING_TIMEOUT_SECONDS:?TELEMETRY_CONSUMER_PROCESSING_TIMEOUT_SECONDS is required}
+      TELEMETRY_CONSUMER_SHUTDOWN_DRAIN_TIMEOUT_SECONDS: ${TELEMETRY_CONSUMER_SHUTDOWN_DRAIN_TIMEOUT_SECONDS:?TELEMETRY_CONSUMER_SHUTDOWN_DRAIN_TIMEOUT_SECONDS is required}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mosquitto:
+        condition: service_healthy
+      event-recorder:
+        condition: service_healthy
+      control-service:
+        condition: service_healthy
+    ports:
+    - 127.0.0.1:${TELEMETRY_CONSUMER_HTTP_PORT:?TELEMETRY_CONSUMER_HTTP_PORT is required}:${TELEMETRY_CONSUMER_API_PORT:?TELEMETRY_CONSUMER_API_PORT is required}
+    healthcheck:
+      test:
+      - CMD
+      - python
+      - -m
+      - telemetry_consumer.healthcheck
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 15s
+  data-cleanup:
+    image: garage-backend/data-cleanup:local
+    build:
+      context: .
+      dockerfile: services/data-cleanup/Dockerfile
+    restart: unless-stopped
+    stop_grace_period: 45s
+    environment:
+      DATA_CLEANUP_CONFIG_PATH: /app/config/data-cleanup.toml
+      DATA_CLEANUP_DATABASE_HOST: postgres
+      DATA_CLEANUP_DATABASE_PORT: 5432
+      DATA_CLEANUP_DATABASE_NAME: ${POSTGRES_DB:?POSTGRES_DB is required}
+      DATA_CLEANUP_DATABASE_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      DATA_CLEANUP_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+    - ./config/data-cleanup.toml:/app/config/data-cleanup.toml:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      event-recorder:
+        condition: service_healthy
+  control-service:
+    image: garage-backend/control-service:local
+    build:
+      context: .
+      dockerfile: services/control-service/Dockerfile
+    restart: unless-stopped
+    environment:
+      AUTH_ENABLED: ${AUTH_ENABLED:-true}
+      AUTH_SERVICE_TOKEN: ${AUTH_SERVICE_TOKEN:?AUTH_SERVICE_TOKEN is required}
+      AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
+      AUTH_SESSION_SECONDS: ${AUTH_SESSION_SECONDS:-28800}
+      CONTROL_ENVIRONMENT: ${CONTROL_ENVIRONMENT:?CONTROL_ENVIRONMENT is required}
+      CONTROL_API_HOST: ${CONTROL_API_HOST:?CONTROL_API_HOST is required}
+      CONTROL_API_PORT: ${CONTROL_API_PORT:?CONTROL_API_PORT is required}
+      CONTROL_DATABASE_HOST: postgres
+      CONTROL_DATABASE_PORT: 5432
+      CONTROL_DATABASE_NAME: ${POSTGRES_DB:?POSTGRES_DB is required}
+      CONTROL_DATABASE_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      CONTROL_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      CONTROL_EXPORT_STORAGE_ROOT: /var/lib/garage-simulation/exports
+      CONTROL_EXPORT_RETENTION_SECONDS: ${CONTROL_EXPORT_RETENTION_SECONDS:?CONTROL_EXPORT_RETENTION_SECONDS is required}
+      CONTROL_EXPORT_MAX_ITEMS: ${CONTROL_EXPORT_MAX_ITEMS:?CONTROL_EXPORT_MAX_ITEMS is required}
+      CONTROL_EXPORT_WORKER_CONCURRENCY: ${CONTROL_EXPORT_WORKER_CONCURRENCY:?CONTROL_EXPORT_WORKER_CONCURRENCY is required}
+      CONTROL_EXPORT_PROGRESS_BATCH_SIZE: ${CONTROL_EXPORT_PROGRESS_BATCH_SIZE:?CONTROL_EXPORT_PROGRESS_BATCH_SIZE is required}
+      CONTROL_EXPORT_ZIP_COMPRESSION_LEVEL: ${CONTROL_EXPORT_ZIP_COMPRESSION_LEVEL:?CONTROL_EXPORT_ZIP_COMPRESSION_LEVEL is required}
+      CONTROL_EXPORT_MAX_FILE_SIZE_BYTES: ${CONTROL_EXPORT_MAX_FILE_SIZE_BYTES:?CONTROL_EXPORT_MAX_FILE_SIZE_BYTES is required}
+      CONTROL_EXPORT_CLEANUP_INTERVAL_SECONDS: ${CONTROL_EXPORT_CLEANUP_INTERVAL_SECONDS:?CONTROL_EXPORT_CLEANUP_INTERVAL_SECONDS is required}
+      CONTROL_EXPORT_TMP_MAX_AGE_SECONDS: ${CONTROL_EXPORT_TMP_MAX_AGE_SECONDS:?CONTROL_EXPORT_TMP_MAX_AGE_SECONDS is required}
+      CONTROL_EXPORT_GENERATOR_VERSION: ${CONTROL_EXPORT_GENERATOR_VERSION:?CONTROL_EXPORT_GENERATOR_VERSION is required}
+      CONTROL_EXPORT_MAX_FAILURE_PAYLOAD_BYTES: ${CONTROL_EXPORT_MAX_FAILURE_PAYLOAD_BYTES:?CONTROL_EXPORT_MAX_FAILURE_PAYLOAD_BYTES is required}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mosquitto:
+        condition: service_healthy
+      event-recorder:
+        condition: service_healthy
+    ports:
+    - 127.0.0.1:${CONTROL_HTTP_PORT:?CONTROL_HTTP_PORT is required}:${CONTROL_API_PORT:?CONTROL_API_PORT is required}
+    volumes:
+    - export-data:/var/lib/garage-simulation/exports
+    healthcheck:
+      test:
+      - CMD
+      - python
+      - -m
+      - control_service.healthcheck
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 15s
+volumes:
+  postgres-data: null
+  mosquitto-data: null
+  export-data: null

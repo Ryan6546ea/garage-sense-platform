@@ -1,0 +1,55 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "configVersion": {
+      "exclusiveMinimum": 0,
+      "title": "Configversion",
+      "type": "integer"
+    },
+    "name": {
+      "anyOf": [
+        {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        }
+      ],
+      "title": "Name"
+    },
+    "publishIntervalSeconds": {
+      "anyOf": [
+        {
+          "maximum": 86400,
+          "minimum": 0.1,
+          "type": "number"
+        }
+      ],
+      "title": "Publishintervalseconds"
+    },
+    "seed": {
+      "anyOf": [
+        {
+          "maximum": 2147483647,
+          "minimum": 0,
+          "type": "integer"
+        }
+      ],
+      "title": "Seed"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      ],
+      "title": "Parameters"
+    }
+  },
+  "required": [
+    "configVersion"
+  ],
+  "title": "SensorPatch",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

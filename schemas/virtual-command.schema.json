@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://garage.example/schemas/virtual-command.schema.json",
+  "title": "VirtualCommandRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "commandId", "garageId", "targetDeviceId", "action", "reason", "issuedBy", "sourceTime", "parameters"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "commandId": {"type": "string", "pattern": "^CMD-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"},
+    "garageId": {"const": "G001"},
+    "targetDeviceId": {"const": "G001-VIRTUAL-CONTROLLER"},
+    "action": {"enum": ["ALARM_BUZZER_ON", "ALARM_BUZZER_OFF", "STOP_REQUEST", "DISABLE_AREA", "ENABLE_AREA"]},
+    "reason": {"type": "string", "minLength": 1, "maxLength": 1000},
+    "issuedBy": {"type": "string", "minLength": 1, "maxLength": 200},
+    "sourceTime": {"type": "string", "format": "date-time"},
+    "parameters": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"action": {"enum": ["ALARM_BUZZER_ON", "ALARM_BUZZER_OFF"]}}},
+      "then": {"properties": {"parameters": {"maxProperties": 0}}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "STOP_REQUEST"}}},
+      "then": {
+        "properties": {
+          "parameters": {
+            "oneOf": [
+              {"type": "object", "additionalProperties": false, "required": ["scope"], "properties": {"scope": {"const": "garage"}}},
+              {"type": "object", "additionalProperties": false, "required": ["scope", "areaId"], "properties": {"scope": {"const": "area"}, "areaId": {"enum": ["A-LIFT", "A-SHIFT", "A-PRESENCE", "A-ENV"]}}}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"action": {"enum": ["DISABLE_AREA", "ENABLE_AREA"]}}},
+      "then": {"properties": {"parameters": {"type": "object", "additionalProperties": false, "required": ["areaId"], "properties": {"areaId": {"enum": ["A-LIFT", "A-SHIFT", "A-PRESENCE", "A-ENV"]}}}}}
+    }
+  ]
+}

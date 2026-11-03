@@ -1,0 +1,15 @@
+[project]
+name = "garage-backend"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = ['sim-core', 'control-service', 'event-recorder', 'telemetry-consumer', 'data-cleanup']
+
+[tool.uv.workspace]
+members = ['packages/sim-core', 'services/control-service', 'services/event-recorder', 'services/telemetry-consumer', 'services/data-cleanup']
+
+[tool.uv.sources]
+sim-core = { workspace = true }
+control-service = { workspace = true }
+event-recorder = { workspace = true }
+telemetry-consumer = { workspace = true }
+data-cleanup = { workspace = true }

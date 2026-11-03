@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://garage-simulation.local/schemas/environment-telemetry-envelope.schema.json",
+  "title": "Temperature and Humidity Telemetry Envelope",
+  "description": "Unified telemetry envelope specialized for environment measurements.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "messageId", "garageId", "areaId", "deviceId", "sensorId",
+    "pointCode", "sensorType", "sourceTime", "seq", "status", "quality", "actionStage",
+    "source", "scenarioId", "data"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "2.0"},
+    "messageId": {
+      "type": "string",
+      "pattern": "^MSG-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "garageId": {"type": "string", "minLength": 1},
+    "areaId": {"type": "string", "minLength": 1},
+    "deviceId": {"type": "string", "minLength": 1},
+    "sensorId": {"type": "string", "minLength": 1},
+    "pointCode": {"const": "GARAGE_TEMP_HUMIDITY"},
+    "sensorType": {"const": "environment"},
+    "sourceTime": {"type": "string", "format": "date-time"},
+    "seq": {"type": "integer", "minimum": 0},
+    "status": {
+      "type": "string",
+      "enum": ["normal", "warning", "critical", "fault", "offline", "unknown"]
+    },
+    "quality": {
+      "type": "string",
+      "enum": ["valid", "invalid", "missing", "delayed", "duplicated", "out_of_range"]
+    },
+    "actionStage": {
+      "enum": ["idle", "starting", "lifting", "shifting", "arriving", "stopped", "fault"]
+    },
+    "source": {"const": "simulator"},
+    "scenarioId": {"type": "string", "minLength": 1},
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "temperature", "temperatureUnit", "humidity", "humidityUnit", "pressureKPa", "altitudeMeters",
+        "condensationRisk"
+      ],
+      "properties": {
+        "temperature": {"type": ["number", "null"]},
+        "temperatureUnit": {"const": "C"},
+        "humidity": {"type": ["number", "null"]},
+        "humidityUnit": {"const": "%RH"},
+        "pressureKPa": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "altitudeMeters": {"type": ["number", "null"], "minimum": 0},
+        "condensationRisk": {"type": ["boolean", "null"]}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "offline"}}},
+      "then": {
+        "properties": {
+          "quality": {"const": "missing"},
+          "data": {
+            "properties": {
+              "temperature": {"type": "null"},
+              "humidity": {"type": "null"},
+              "pressureKPa": {"type": "null"},
+              "altitudeMeters": {"type": "null"},
+              "condensationRisk": {"type": "null"}
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "data": {
+            "properties": {
+              "temperature": {"type": "number"},
+              "humidity": {"type": "number"},
+              "pressureKPa": {"type": "number", "exclusiveMinimum": 0},
+              "altitudeMeters": {"type": "number", "minimum": 0},
+              "condensationRisk": {"type": "boolean"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"quality": {"const": "missing"}}},
+      "then": {"properties": {"status": {"const": "offline"}}}
+    },
+    {
+      "if": {
+        "not": {
+          "properties": {"scenarioId": {"const": "ENVIRONMENT_OUT_OF_RANGE"}}
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "properties": {
+              "humidity": {
+                "anyOf": [
+                  {"type": "number", "minimum": 0, "maximum": 100},
+                  {"type": "null"}
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

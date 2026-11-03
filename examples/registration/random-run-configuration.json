@@ -1,0 +1,38 @@
+{
+  "durationSeconds": 60,
+  "abnormalProbability": 1,
+  "seed": 17,
+  "allowedTargets": [
+    "sensor:G003-CUR-002"
+  ],
+  "allowedScenarios": [
+    "LIFT_CURRENT_OVERLOAD"
+  ],
+  "scenarioDuration": {
+    "minimumSeconds": 1,
+    "maximumSeconds": 2
+  },
+  "selectionIntervalSeconds": 1,
+  "registeredSensors": [
+    {
+      "sensorId": "G003-CUR-002",
+      "deviceId": "G003-MOTOR-001",
+      "sensorType": "current",
+      "name": "升降电机第二电流传感器",
+      "pointCode": "LIFT_MOTOR_CURRENT",
+      "role": "LIFT",
+      "publishIntervalSeconds": 1,
+      "seed": 3002,
+      "parameters": {
+        "batchSamples": 10,
+        "sampleRateHz": 10
+      },
+      "desiredEnabled": true,
+      "garageId": "G003",
+      "areaId": "A-LIFT",
+      "topic": "garage/G003/telemetry/current/G003-CUR-002",
+      "configVersion": 1,
+      "archived": false
+    }
+  ]
+}

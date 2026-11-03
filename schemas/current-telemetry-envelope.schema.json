@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://garage-simulation.local/schemas/current-telemetry-envelope.schema.json",
+  "title": "Motor Current Telemetry Envelope",
+  "description": "Unified telemetry envelope specialized for batched motor-current data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "messageId",
+    "garageId",
+    "areaId",
+    "deviceId",
+    "sensorId",
+    "pointCode",
+    "sensorType",
+    "sourceTime",
+    "seq",
+    "status",
+    "quality",
+    "actionStage",
+    "source",
+    "scenarioId",
+    "data"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "2.0"},
+    "messageId": {
+      "type": "string",
+      "pattern": "^MSG-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "garageId": {"type": "string", "minLength": 1},
+    "areaId": {"type": "string", "minLength": 1},
+    "deviceId": {"type": "string", "minLength": 1},
+    "sensorId": {"type": "string", "minLength": 1},
+    "pointCode": {
+      "enum": ["LIFT_MOTOR_CURRENT", "SHIFT_MOTOR_CURRENT"]
+    },
+    "sensorType": {"const": "current"},
+    "sourceTime": {"type": "string", "format": "date-time"},
+    "seq": {"type": "integer", "minimum": 0},
+    "status": {
+      "type": "string",
+      "enum": ["normal", "warning", "critical", "fault", "offline", "unknown"]
+    },
+    "quality": {
+      "type": "string",
+      "enum": ["valid", "invalid", "missing", "delayed", "duplicated", "out_of_range"]
+    },
+    "actionStage": {
+      "enum": ["idle", "starting", "lifting", "shifting", "arriving", "stopped", "fault"]
+    },
+    "source": {"const": "simulator"},
+    "scenarioId": {"type": "string", "minLength": 1},
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unit",
+        "sampleRateHz",
+        "sampleCount",
+        "windowStartTime",
+        "windowEndTime",
+        "phase",
+        "currentSamples"
+      ],
+      "properties": {
+        "unit": {"const": "A"},
+        "sampleRateHz": {"type": "integer", "minimum": 1, "default": 10},
+        "sampleCount": {"type": "integer", "minimum": 0},
+        "windowStartTime": {"type": "string", "format": "date-time"},
+        "windowEndTime": {"type": "string", "format": "date-time"},
+        "phase": {
+          "type": "string",
+          "enum": ["stopped", "starting", "running", "overload", "stalled", "offline"]
+        },
+        "currentSamples": {
+          "type": "array",
+          "items": {"type": "number"}
+        }
+      }
+    }
+  }
+}

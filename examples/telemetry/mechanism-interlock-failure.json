@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "2.0",
+  "messageId": "MSG-823e4567-e89b-42d3-a456-426614174008",
+  "garageId": "G001",
+  "areaId": "A-MECHANISM",
+  "deviceId": "G001-STATE-001",
+  "sensorId": "G001-STATE-001",
+  "pointCode": "MECHANISM_STATE",
+  "sensorType": "mechanism_state",
+  "sourceTime": "2026-07-31T00:05:08+08:00",
+  "seq": 1009,
+  "status": "fault",
+  "quality": "valid",
+  "actionStage": "fault",
+  "source": "simulator",
+  "scenarioId": "MECHANISM_INTERLOCK_FAILURE",
+  "data": {
+    "plcState": "fault",
+    "atPosition": false,
+    "liftLimitActive": false,
+    "shiftLimitActive": false,
+    "interlockClosed": false,
+    "emergencyStop": false,
+    "loadKg": 1380.0
+  }
+}

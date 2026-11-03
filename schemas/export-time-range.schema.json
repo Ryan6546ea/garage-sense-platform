@@ -1,0 +1,107 @@
+{
+  "$defs": {
+    "DataQuality": {
+      "description": "Allowed telemetry data-quality states.",
+      "enum": [
+        "valid",
+        "invalid",
+        "missing",
+        "delayed",
+        "duplicated",
+        "out_of_range"
+      ],
+      "title": "DataQuality",
+      "type": "string"
+    },
+    "TelemetryStatus": {
+      "description": "Allowed telemetry states.",
+      "enum": [
+        "normal",
+        "warning",
+        "critical",
+        "fault",
+        "offline",
+        "unknown"
+      ],
+      "title": "TelemetryStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "const": "time_range",
+      "title": "Type",
+      "type": "string"
+    },
+    "receivedFrom": {
+      "format": "date-time",
+      "title": "Receivedfrom",
+      "type": "string"
+    },
+    "receivedTo": {
+      "format": "date-time",
+      "title": "Receivedto",
+      "type": "string"
+    },
+    "sensorIds": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10000,
+      "title": "Sensorids",
+      "type": "array"
+    },
+    "garageIds": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10000,
+      "title": "Garageids",
+      "type": "array"
+    },
+    "deviceIds": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Deviceids",
+      "type": "array"
+    },
+    "sensorTypes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Sensortypes",
+      "type": "array"
+    },
+    "scenarioIds": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Scenarioids",
+      "type": "array"
+    },
+    "statuses": {
+      "items": {
+        "$ref": "#/$defs/TelemetryStatus"
+      },
+      "title": "Statuses",
+      "type": "array"
+    },
+    "qualities": {
+      "items": {
+        "$ref": "#/$defs/DataQuality"
+      },
+      "title": "Qualities",
+      "type": "array"
+    }
+  },
+  "required": [
+    "type",
+    "receivedFrom",
+    "receivedTo"
+  ],
+  "title": "TimeRangeExportSource",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

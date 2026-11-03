@@ -1,0 +1,518 @@
+{
+  "$defs": {
+    "GarageCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "garageId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$",
+          "title": "Garageid",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "altitudeMeters": {
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Altitudemeters",
+          "type": "number"
+        }
+      },
+      "required": [
+        "garageId",
+        "name",
+        "altitudeMeters"
+      ],
+      "title": "GarageCreate",
+      "type": "object"
+    },
+    "RegisteredSensor": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "sensorType": {
+                "const": "laser_distance"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "additionalProperties": false,
+                "properties": {
+                  "vehicleDistanceM": {
+                    "maximum": 1000,
+                    "minimum": 0,
+                    "title": "Vehicledistancem",
+                    "type": "number"
+                  },
+                  "clearDistanceM": {
+                    "maximum": 1000,
+                    "minimum": 0,
+                    "title": "Cleardistancem",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "vehicleDistanceM",
+                  "clearDistanceM"
+                ],
+                "title": "LaserParameters",
+                "type": "object"
+              },
+              "pointCode": {
+                "const": "VEHICLE_DISTANCE"
+              },
+              "role": {
+                "type": "null"
+              },
+              "cameraId": {
+                "type": "null"
+              }
+            },
+            "required": []
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "sensorType": {
+                "const": "current"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "additionalProperties": false,
+                "properties": {
+                  "batchSamples": {
+                    "maximum": 1000,
+                    "minimum": 1,
+                    "title": "Batchsamples",
+                    "type": "integer"
+                  },
+                  "sampleRateHz": {
+                    "maximum": 100000,
+                    "minimum": 1,
+                    "title": "Sampleratehz",
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "batchSamples",
+                  "sampleRateHz"
+                ],
+                "title": "CurrentParameters",
+                "type": "object"
+              },
+              "role": {
+                "enum": [
+                  "LIFT",
+                  "SHIFT"
+                ]
+              },
+              "pointCode": {
+                "enum": [
+                  "LIFT_MOTOR_CURRENT",
+                  "SHIFT_MOTOR_CURRENT"
+                ]
+              },
+              "cameraId": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "role"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "sensorType": {
+                "const": "vibration"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "additionalProperties": false,
+                "properties": {
+                  "sampleCount": {
+                    "maximum": 10000,
+                    "minimum": 1,
+                    "title": "Samplecount",
+                    "type": "integer"
+                  },
+                  "sampleRateHz": {
+                    "maximum": 100000,
+                    "minimum": 1,
+                    "title": "Sampleratehz",
+                    "type": "integer"
+                  },
+                  "normalAmplitude": {
+                    "maximum": 1000,
+                    "minimum": 0,
+                    "title": "Normalamplitude",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "sampleCount",
+                  "sampleRateHz",
+                  "normalAmplitude"
+                ],
+                "title": "VibrationParameters",
+                "type": "object"
+              },
+              "pointCode": {
+                "const": "LIFT_MECHANISM_VIBRATION"
+              },
+              "role": {
+                "type": "null"
+              },
+              "cameraId": {
+                "type": "null"
+              }
+            },
+            "required": []
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "sensorType": {
+                "const": "environment"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "additionalProperties": false,
+                "properties": {
+                  "temperatureC": {
+                    "maximum": 80,
+                    "minimum": -80,
+                    "title": "Temperaturec",
+                    "type": "number"
+                  },
+                  "humidityRh": {
+                    "maximum": 99,
+                    "minimum": 1,
+                    "title": "Humidityrh",
+                    "type": "number"
+                  },
+                  "pressureKPa": {
+                    "maximum": 120,
+                    "minimum": 10,
+                    "title": "Pressurekpa",
+                    "type": "number"
+                  },
+                  "altitudeMeters": {
+                    "maximum": 10000,
+                    "minimum": 0,
+                    "title": "Altitudemeters",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "temperatureC",
+                  "humidityRh",
+                  "pressureKPa",
+                  "altitudeMeters"
+                ],
+                "title": "EnvironmentParameters",
+                "type": "object"
+              },
+              "pointCode": {
+                "const": "GARAGE_TEMP_HUMIDITY"
+              },
+              "role": {
+                "type": "null"
+              },
+              "cameraId": {
+                "type": "null"
+              }
+            },
+            "required": []
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "sensorType": {
+                "const": "vision_event"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "additionalProperties": false,
+                "properties": {},
+                "title": "CatalogModel",
+                "type": "object"
+              },
+              "pointCode": {
+                "const": "VISION_SAFETY_STATE"
+              },
+              "role": {
+                "type": "null"
+              },
+              "cameraId": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "cameraId"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "sensorType": {
+                "const": "mechanism_state"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "additionalProperties": false,
+                "properties": {
+                  "loadKg": {
+                    "maximum": 100000,
+                    "minimum": 0,
+                    "title": "Loadkg",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "loadKg"
+                ],
+                "title": "MechanismParameters",
+                "type": "object"
+              },
+              "pointCode": {
+                "const": "MECHANISM_STATE"
+              },
+              "role": {
+                "type": "null"
+              },
+              "cameraId": {
+                "type": "null"
+              }
+            },
+            "required": []
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "sensorType": {
+                "const": "current"
+              },
+              "role": {
+                "const": "LIFT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "pointCode": {
+                "const": "LIFT_MOTOR_CURRENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "sensorType": {
+                "const": "current"
+              },
+              "role": {
+                "const": "SHIFT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "pointCode": {
+                "const": "SHIFT_MOTOR_CURRENT"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "sensorId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$",
+          "title": "Sensorid",
+          "type": "string"
+        },
+        "deviceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$",
+          "title": "Deviceid",
+          "type": "string"
+        },
+        "sensorType": {
+          "enum": [
+            "laser_distance",
+            "current",
+            "vibration",
+            "environment",
+            "vision_event",
+            "mechanism_state"
+          ],
+          "title": "Sensortype",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "pointCode": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Pointcode",
+          "type": "string"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "LIFT",
+                "SHIFT"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "cameraId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cameraid"
+        },
+        "publishIntervalSeconds": {
+          "maximum": 86400,
+          "minimum": 0.1,
+          "title": "Publishintervalseconds",
+          "type": "number"
+        },
+        "seed": {
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "title": "Parameters",
+          "type": "object"
+        },
+        "desiredEnabled": {
+          "title": "Desiredenabled",
+          "type": "boolean"
+        },
+        "garageId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$",
+          "title": "Garageid",
+          "type": "string"
+        },
+        "areaId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$",
+          "title": "Areaid",
+          "type": "string"
+        },
+        "topic": {
+          "minLength": 1,
+          "title": "Topic",
+          "type": "string"
+        },
+        "configVersion": {
+          "exclusiveMinimum": 0,
+          "title": "Configversion",
+          "type": "integer"
+        },
+        "archived": {
+          "title": "Archived",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "sensorId",
+        "deviceId",
+        "sensorType",
+        "name",
+        "pointCode",
+        "publishIntervalSeconds",
+        "seed",
+        "parameters",
+        "desiredEnabled",
+        "garageId",
+        "areaId",
+        "topic",
+        "configVersion",
+        "archived"
+      ],
+      "title": "RegisteredSensor",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "revision": {
+      "minimum": 0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "garages": {
+      "items": {
+        "$ref": "#/$defs/GarageCreate"
+      },
+      "title": "Garages",
+      "type": "array"
+    },
+    "sensors": {
+      "items": {
+        "$ref": "#/$defs/RegisteredSensor"
+      },
+      "title": "Sensors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "revision",
+    "garages",
+    "sensors"
+  ],
+  "title": "CatalogSnapshot",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

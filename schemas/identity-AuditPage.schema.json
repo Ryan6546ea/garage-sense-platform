@@ -1,0 +1,97 @@
+{
+  "$defs": {
+    "AuditView": {
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "title": "Eventid",
+          "type": "integer"
+        },
+        "actorId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Actorid"
+        },
+        "actor": {
+          "title": "Actor",
+          "type": "string"
+        },
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "garageIds": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Garageids",
+          "type": "array"
+        },
+        "outcome": {
+          "title": "Outcome",
+          "type": "string"
+        },
+        "occurredAt": {
+          "format": "date-time",
+          "title": "Occurredat",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        }
+      },
+      "required": [
+        "eventId",
+        "actorId",
+        "actor",
+        "action",
+        "target",
+        "garageIds",
+        "outcome",
+        "occurredAt",
+        "details"
+      ],
+      "title": "AuditView",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "items": {
+      "items": {
+        "$ref": "#/$defs/AuditView"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "nextCursor": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Nextcursor"
+    }
+  },
+  "required": [
+    "items",
+    "nextCursor"
+  ],
+  "title": "AuditPage",
+  "type": "object"
+}

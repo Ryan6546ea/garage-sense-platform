@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "role": "viewer",
+  "status": "active",
+  "garageIds": [
+    "G001"
+  ],
+  "logScope": "own",
+  "logExport": false
+}

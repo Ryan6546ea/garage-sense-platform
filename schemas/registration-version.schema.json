@@ -1,0 +1,16 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "configVersion": {
+      "exclusiveMinimum": 0,
+      "title": "Configversion",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "configVersion"
+  ],
+  "title": "VersionRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

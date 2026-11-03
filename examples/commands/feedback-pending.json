@@ -1,0 +1,1 @@
+{"schemaVersion":"1.0","feedbackId":"FDB-97917aa3-3c3d-4cd8-a78b-bd821464cfc5","commandId":"CMD-2b83271d-e530-486e-b68e-0b331876e75e","garageId":"G001","targetDeviceId":"G001-VIRTUAL-CONTROLLER","action":"ALARM_BUZZER_ON","result":"pending","message":"虚拟执行处理中","feedbackSequence":1,"emittedAt":"2026-08-01T01:10:00.300+08:00","executedAt":null,"source":"virtual-controller-mock"}

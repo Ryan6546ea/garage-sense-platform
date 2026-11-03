@@ -1,0 +1,102 @@
+{
+  "$defs": {
+    "ScenarioDuration": {
+      "additionalProperties": false,
+      "properties": {
+        "minimumSeconds": {
+          "exclusiveMinimum": 0,
+          "maximum": 86400,
+          "title": "Minimumseconds",
+          "type": "integer"
+        },
+        "maximumSeconds": {
+          "exclusiveMinimum": 0,
+          "maximum": 86400,
+          "title": "Maximumseconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "minimumSeconds",
+        "maximumSeconds"
+      ],
+      "title": "ScenarioDuration",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "durationSeconds": {
+      "exclusiveMinimum": 0,
+      "maximum": 604800,
+      "title": "Durationseconds",
+      "type": "number"
+    },
+    "registeredSensors": {
+      "default": null,
+      "title": "Registeredsensors",
+      "type": "null"
+    },
+    "abnormalProbability": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Abnormalprobability",
+      "type": "number"
+    },
+    "seed": {
+      "title": "Seed",
+      "type": "integer"
+    },
+    "allowedTargets": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowedtargets",
+      "type": "array"
+    },
+    "allowedScenarios": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowedscenarios",
+      "type": "array"
+    },
+    "scenarioDuration": {
+      "$ref": "#/$defs/ScenarioDuration"
+    },
+    "selectionIntervalSeconds": {
+      "exclusiveMinimum": 0,
+      "maximum": 86400,
+      "title": "Selectionintervalseconds",
+      "type": "number"
+    },
+    "name": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "createdBy": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Createdby",
+      "type": "string"
+    }
+  },
+  "required": [
+    "durationSeconds",
+    "abnormalProbability",
+    "seed",
+    "allowedTargets",
+    "allowedScenarios",
+    "scenarioDuration",
+    "selectionIntervalSeconds",
+    "name",
+    "createdBy"
+  ],
+  "title": "CreateRunRequest",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

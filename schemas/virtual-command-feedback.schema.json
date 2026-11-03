@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://garage.example/schemas/virtual-command-feedback.schema.json",
+  "title": "VirtualCommandFeedback",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "feedbackId", "commandId", "garageId", "targetDeviceId", "action", "result", "message", "feedbackSequence", "emittedAt", "executedAt", "source"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "feedbackId": {"type": "string", "pattern": "^FDB-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"},
+    "commandId": {"type": "string", "pattern": "^CMD-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"},
+    "garageId": {"const": "G001"},
+    "targetDeviceId": {"const": "G001-VIRTUAL-CONTROLLER"},
+    "action": {"enum": ["ALARM_BUZZER_ON", "ALARM_BUZZER_OFF", "STOP_REQUEST", "DISABLE_AREA", "ENABLE_AREA"]},
+    "result": {"enum": ["success", "failed", "rejected", "timeout", "pending"]},
+    "message": {"type": "string", "minLength": 1, "maxLength": 1000},
+    "feedbackSequence": {"type": "integer", "minimum": 1},
+    "emittedAt": {"type": "string", "format": "date-time"},
+    "executedAt": {"type": ["string", "null"], "format": "date-time"},
+    "source": {"const": "virtual-controller-mock"}
+  },
+  "allOf": [
+    {"if": {"properties": {"result": {"const": "pending"}}}, "then": {"properties": {"executedAt": {"type": "null"}}}},
+    {"if": {"properties": {"result": {"enum": ["success", "failed", "rejected", "timeout"]}}}, "then": {"properties": {"executedAt": {"type": "string", "format": "date-time"}}}}
+  ]
+}

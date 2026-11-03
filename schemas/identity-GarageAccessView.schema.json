@@ -1,0 +1,17 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "garageIds": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Garageids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "garageIds"
+  ],
+  "title": "GarageAccessView",
+  "type": "object"
+}

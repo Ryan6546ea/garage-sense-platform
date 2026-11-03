@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://garage-simulation.local/schemas/vision-telemetry-envelope.schema.json",
+  "title": "Synthetic Vision Recognition Telemetry Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "messageId", "garageId", "areaId", "deviceId", "sensorId", "pointCode", "sensorType", "sourceTime", "seq", "status", "quality", "actionStage", "source", "scenarioId", "data"],
+  "properties": {
+    "schemaVersion": {"const": "2.0"},
+    "messageId": {"type": "string", "pattern": "^MSG-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"},
+    "garageId": {"type": "string", "minLength": 1},
+    "areaId": {"type": "string", "minLength": 1},
+    "deviceId": {"type": "string", "minLength": 1},
+    "sensorId": {"type": "string", "minLength": 1},
+    "pointCode": {"const": "VISION_SAFETY_STATE"},
+    "sensorType": {"const": "vision_event"},
+    "sourceTime": {"type": "string", "format": "date-time"},
+    "seq": {"type": "integer", "minimum": 0},
+    "status": {"enum": ["normal", "warning", "critical", "fault", "offline", "unknown"]},
+    "quality": {"enum": ["valid", "invalid", "missing", "delayed", "duplicated", "out_of_range"]},
+    "actionStage": {"enum": ["idle", "starting", "lifting", "shifting", "arriving", "stopped", "fault"]},
+    "source": {"const": "simulator"},
+    "scenarioId": {"type": "string", "minLength": 1},
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cameraId", "personDetected", "vehicleDetected", "vehiclePosition", "confidence"],
+      "properties": {
+        "cameraId": {"type": "string", "minLength": 1},
+        "personDetected": {"type": "boolean"},
+        "vehicleDetected": {"type": "boolean"},
+        "vehiclePosition": {"enum": ["unknown", "clear", "aligned", "misaligned"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    }
+  }
+}

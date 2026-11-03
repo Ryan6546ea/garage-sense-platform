@@ -1,0 +1,45 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "service": {
+      "enum": [
+        "simulator",
+        "consumer"
+      ],
+      "title": "Service",
+      "type": "string"
+    },
+    "instanceId": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Instanceid",
+      "type": "string"
+    },
+    "appliedRevision": {
+      "minimum": 0,
+      "title": "Appliedrevision",
+      "type": "integer"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "maxLength": 2000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error"
+    }
+  },
+  "required": [
+    "service",
+    "instanceId",
+    "appliedRevision"
+  ],
+  "title": "RuntimeReport",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

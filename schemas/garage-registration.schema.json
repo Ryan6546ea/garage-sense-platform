@@ -1,0 +1,30 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "garageId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$",
+      "title": "Garageid",
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "altitudeMeters": {
+      "maximum": 10000,
+      "minimum": 0,
+      "title": "Altitudemeters",
+      "type": "number"
+    }
+  },
+  "required": [
+    "garageId",
+    "name",
+    "altitudeMeters"
+  ],
+  "title": "GarageCreate",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

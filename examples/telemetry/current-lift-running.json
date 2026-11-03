@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "2.0",
+  "messageId": "MSG-2b9bbcd4-c97d-45af-a1d2-3b9da65a70a1",
+  "garageId": "G001",
+  "areaId": "A-LIFT",
+  "deviceId": "G001-MOTOR-LIFT-001",
+  "sensorId": "G001-CUR-LIFT-001",
+  "pointCode": "LIFT_MOTOR_CURRENT",
+  "sensorType": "current",
+  "sourceTime": "2026-07-31T00:05:00.100+08:00",
+  "seq": 1002,
+  "status": "normal",
+  "quality": "valid",
+  "actionStage": "lifting",
+  "source": "simulator",
+  "scenarioId": "LIFT_CURRENT_RUNNING",
+  "data": {
+    "unit": "A",
+    "sampleRateHz": 10,
+    "sampleCount": 10,
+    "windowStartTime": "2026-07-31T00:04:59.100+08:00",
+    "windowEndTime": "2026-07-31T00:05:00.100+08:00",
+    "phase": "running",
+    "currentSamples": [8.42, 8.57, 8.39, 8.63, 8.51, 8.48, 8.55, 8.46, 8.59, 8.50]
+  }
+}
